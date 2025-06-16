@@ -1,41 +1,33 @@
-"use script";
+// 1. Define Async Function
+async function fetchUserData() {
+    // 2. API URL
+    const apiUrl = 'https://jsonplaceholder.typicode.com/users';
 
-document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("registration-form");
-  const feedbackDiv = document.getElementById("form-feedback");
+    // 3. Select display element
+    const dataContainer = document.getElementById('api-data');
 
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
+    try {
+        // 4. Fetch data
+        const response = await fetch(apiUrl);
+        const users = await response.json();
 
-    const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+        // 5. Clear existing content
+        dataContainer.innerHTML = '';
 
-    let isValid = true;
-    const messages = [];
-
-    if (username.length < 3) {
-      isValid = false;
-      messages.push("Username must be at least 3 characters.");
+        // 6. Create list and populate
+        const userList = document.createElement('ul');
+        users.forEach(user => {
+            const listItem = document.createElement('li');
+            listItem.textContent = user.name;
+            userList.appendChild(listItem);
+        });
+        dataContainer.appendChild(userList);
+    } catch (error) {
+        // 7. Handle errors
+        dataContainer.innerHTML = 'Failed to load user data.';
+        console.error('Fetch error:', error);
     }
+}
 
-    if (!email.includes("@") && !email.includes(".")) {
-      isValid = false;
-      messages.push("Enter a valid email address.");
-    }
-
-    if (!(password.length >= 8)) {
-      isValid = false;
-      messages.push("Password must be at least 8 characters.");
-    }
-
-    feedbackDiv.style.display = "block";
-    if (isValid) {
-      feedbackDiv.textContent = "Registration successful!";
-      feedbackDiv.style.color = "#28a745";
-    } else {
-      feedbackDiv.innerHTML = `${messages.join("<br>")}`;
-      feedbackDiv.style.color = "#dc3545";
-    }
-  });
-});
+// 8. Run on page load
+document.addEventListener('DOMContentLoaded', fetchUserData);
